@@ -11,10 +11,12 @@ REPO_URL="${REPO_URL:-https://github.com/Wallesters-org/clawhermesmanus.git}"
 REPO_DIR="${REPO_DIR:-$HOME/chm}"
 BRANCH="${BRANCH:-main}"
 
-DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SIBLING_SCRIPT="$SCRIPT_DIR/scripts/run-local.sh"
 
-if [ -fx "$DIR/scripts/run-local.sh" ]; then
-  exec "$DIR/scripts/run-local.sh" "$@"
+if [ -f "$SIBLING_SCRIPT" ]; then
+  chmod +x "$SIBLING_SCRIPT" 2>/dev/null || true
+  exec bash "$SIBLING_SCRIPT" "$@"
 fi
 
 echo "▶ Bootstrap: scripts/run-local.sh not found next to this shim."
@@ -29,5 +31,5 @@ else
   git clone --branch "$BRANCH" "$REPO_URL" "$REPO_DIR"
 fi
 
-chmod +x "$REPO_DIR/scripts/run-local.sh"
-exec "$REPO_DIR/scripts/run-local.sh" "$@"
+chmod +x "$REPO_DIR/scripts/run-local.sh" 2>/dev/null || true
+exec bash "$REPO_DIR/scripts/run-local.sh" "$@"
