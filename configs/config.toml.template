@@ -1,0 +1,86 @@
+# ClawHermesManus configuration template
+# Copy to ~/.config/chm/config.toml and fill in your secrets
+
+[meta]
+name = "clawhermesmanus"
+version = "0.1.0"
+locale = "bg_BG"
+timezone = "Europe/Sofia"
+
+# === LLM Routing (OpenManus multi-model pattern) ===
+[llm.primary]
+provider = "anthropic"
+model    = "claude-sonnet-4.6"
+api_key  = "sk-ant-..."
+max_tokens = 8192
+temperature = 0.2
+
+[llm.fallback]
+provider = "openai"
+model    = "gpt-4o"
+api_key  = "sk-..."
+
+[llm.vision]
+provider = "openai"
+model    = "gpt-4o"
+api_key  = "sk-..."
+
+[llm.local]
+provider = "ollama"
+model    = "gemma3:27b"
+base_url = "http://localhost:11434"
+
+# === GitHub Autonomy (OpenClaw pattern) ===
+[github]
+pat       = "github_pat_..."  # Fine-grained PAT
+owner     = "Wallesters-org"
+default_repo = "clawhermesmanus"
+allowed_actions = ["clone", "read", "write", "pr", "issue"]
+
+# === Gateways (Hermes pattern) ===
+[gateways.telegram]
+enabled   = true
+bot_token = ""
+allowed_user_ids = []
+
+[gateways.discord]
+enabled   = false
+bot_token = ""
+
+[gateways.slack]
+enabled   = false
+bot_token = ""
+
+# === Scheduler ===
+[scheduler]
+enabled = true
+timezone = "Europe/Sofia"
+
+# === Browser automation (OpenManus + OpenClaw) ===
+[browser]
+engine   = "playwright"
+headless = true
+user_data_dir = "~/.chm/browser-profile"
+
+# === Storage ===
+[storage.postgres]
+dsn = "postgresql://chm:chm@localhost:5432/chm"
+
+[storage.redis]
+url = "redis://localhost:6379/0"
+
+[storage.supabase]
+url = ""
+anon_key = ""
+service_role_key = ""
+
+# === Networking ===
+[network.tailscale]
+enabled = true
+hostname = "chm-mac-mini"
+
+# === Web UI (OpenManus dashboard) ===
+[ui]
+enabled = true
+host = "127.0.0.1"
+port = 7860
