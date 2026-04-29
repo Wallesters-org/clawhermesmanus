@@ -13,7 +13,7 @@ BRANCH="${BRANCH:-main}"
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-if [ -x "$DIR/scripts/run-local.sh" ]; then
+if [ -fx "$DIR/scripts/run-local.sh" ]; then
   exec "$DIR/scripts/run-local.sh" "$@"
 fi
 
