@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: chm
+      POSTGRES_PASSWORD: chm
+      POSTGRES_DB: chm
+    volumes:
+      - chm_pg:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U chm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+
+  ollama:
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - chm_ollama:/root/.ollama
+
+  chm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    env_file:
+      - .env
+    volumes:
+      - ${HOME}/.config/chm:/root/.config/chm:ro
+      - ./src:/app/src
+    ports:
+      - "7860:7860"
+    command: ["chm", "serve", "--host", "0.0.0.0", "--port", "7860"]
+
+volumes:
+  chm_pg:
+  chm_ollama:
